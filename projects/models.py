@@ -1,11 +1,13 @@
+import re
 from django.db import models
 from common.models import CommonModel
 
 
 class Audio(CommonModel):
-    index = models.PositiveIntegerField(verbose_name="순서")
+    index = models.PositiveIntegerField(unique=True, verbose_name="순서")
     text = models.CharField(max_length=80, verbose_name="오디오로 변환된 텍스트")
-    speed = models.PositiveIntegerField(verbose_name="오디오의 스피드")
+    speed = models.PositiveIntegerField(default=1, verbose_name="오디오의 스피드")
+    path = models.CharField(max_length=80, verbose_name="파일 경로")
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
@@ -19,6 +21,16 @@ class Audio(CommonModel):
 
     def __str__(self):
         return self.text
+
+    @property
+    def processed_text(self):
+        separated_text = re.split("[.!?]", self.text)
+        no_gap_text = []
+        for text in separated_text:
+            if text.isspace():
+                continue
+            no_gap_text.append(text.strip())
+        return no_gap_text
 
 
 class Project(CommonModel):
