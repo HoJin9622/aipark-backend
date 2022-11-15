@@ -18,9 +18,14 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-THIRD_PARTY_APPS = []
+THIRD_PARTY_APPS = [
+    "rest_framework",
+]
 
-CUSTOM_APPS = []
+CUSTOM_APPS = [
+    "common.apps.CommonConfig",
+    "projects.apps.ProjectsConfig",
+]
 
 SYSTEM_APPS = [
     "django.contrib.admin",
