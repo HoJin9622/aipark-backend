@@ -164,8 +164,8 @@ python manage.py runserver
   ```json
   {
     "text": "Hello! How are you?", // required
-    "speed": 1, // required
-    "index": 1 // required
+    "index": 1, // required
+    "speed": 1 // optional
   }
   ```
 
