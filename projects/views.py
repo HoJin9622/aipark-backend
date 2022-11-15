@@ -1,4 +1,5 @@
 from gtts import gTTS
+from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError, NotFound
@@ -38,6 +39,8 @@ class Projects(APIView):
 
 
 class ProjectAudio(APIView):
+    PAGE_SIZE = 10
+
     def get_object(self, pk):
         try:
             return Project.objects.get(pk=pk)
@@ -49,7 +52,15 @@ class ProjectAudio(APIView):
         텍스트 조회
         GET api/v1/projects/{id}/audios/
         """
+
+        try:
+            page = request.query_params.get("page", 1)
+            page = int(page)
+        except ValueError:
+            page = 1
+
         project = self.get_object(pk)
         audios = project.audios.all()
-        serializer = AudioSerializer(audios, many=True)
+        paginator = Paginator(audios, self.PAGE_SIZE, orphans=2)
+        serializer = AudioSerializer(paginator.get_page(page), many=True)
         return Response(serializer.data)
