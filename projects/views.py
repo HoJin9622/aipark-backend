@@ -38,6 +38,19 @@ class Projects(APIView):
         return Response({"ok": True})
 
 
+class ProjectDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Project.objects.get(pk=pk)
+        except Project.DoesNotExist:
+            raise NotFound
+
+    def delete(self, request, pk):
+        project = self.get_object(pk)
+        project.delete()
+        return Response({"ok": True}, status=HTTP_204_NO_CONTENT)
+
+
 class ProjectAudio(APIView):
     PAGE_SIZE = 10
 
