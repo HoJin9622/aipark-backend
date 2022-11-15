@@ -23,3 +23,9 @@ class AudioSerializer(serializers.ModelSerializer):
             "path",
             "processed_text",
         )
+
+
+class AudioDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Audio
+        fields = ("text", "speed")

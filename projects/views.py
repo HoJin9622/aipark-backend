@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError, NotFound
 from rest_framework.status import HTTP_400_BAD_REQUEST
-from .serializers import ProjectSerializer, AudioSerializer
+from .serializers import ProjectSerializer, AudioSerializer, AudioDetailSerializer
 from .models import Audio, Project
 
 
@@ -64,3 +64,27 @@ class ProjectAudio(APIView):
         paginator = Paginator(audios, self.PAGE_SIZE, orphans=2)
         serializer = AudioSerializer(paginator.get_page(page), many=True)
         return Response(serializer.data)
+
+
+class AudioDetail(APIView):
+    def get_object(self, pk):
+        try:
+            return Audio.objects.get(pk=pk)
+        except Audio.DoesNotExist:
+            raise NotFound
+
+    def patch(self, request, pk):
+        """
+        텍스트 수정
+        PATCH api/v1/audios/{id}/
+        """
+        audio = self.get_object(pk)
+        serializer = AudioDetailSerializer(
+            audio,
+            data=request.data,
+            partial=True,
+        )
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        serializer.save()
+        return Response({"ok": True})
