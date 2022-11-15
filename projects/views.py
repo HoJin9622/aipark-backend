@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import ParseError, NotFound
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_204_NO_CONTENT
 from .serializers import ProjectSerializer, AudioSerializer, AudioDetailSerializer
 from .models import Audio, Project
 
@@ -88,3 +88,12 @@ class AudioDetail(APIView):
             return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
         serializer.save()
         return Response({"ok": True})
+
+    def delete(self, request, pk):
+        """
+        텍스트 삭제
+        DELETE api/v1/audios/{id}/
+        """
+        audio = self.get_object(pk)
+        audio.delete()
+        return Response({"ok": True}, status=HTTP_204_NO_CONTENT)
