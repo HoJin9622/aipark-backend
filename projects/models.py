@@ -11,7 +11,7 @@ class Audio(CommonModel):
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
-        related_name="projects",
+        related_name="audios",
         verbose_name="프로젝트",
     )
 
