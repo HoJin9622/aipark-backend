@@ -7,7 +7,6 @@ class Audio(CommonModel):
     index = models.PositiveIntegerField(unique=True, verbose_name="순서")
     text = models.CharField(max_length=80, verbose_name="오디오로 변환된 텍스트")
     speed = models.PositiveIntegerField(default=1, verbose_name="오디오의 스피드")
-    path = models.CharField(max_length=80, verbose_name="파일 경로")
     project = models.ForeignKey(
         "Project",
         on_delete=models.CASCADE,
@@ -18,6 +17,7 @@ class Audio(CommonModel):
     class Meta:
         verbose_name = "오디오"
         verbose_name_plural = verbose_name
+        ordering = ["index"]
 
     def __str__(self):
         return self.text
@@ -32,14 +32,19 @@ class Audio(CommonModel):
             no_gap_text.append(text.strip())
         return no_gap_text
 
+    @property
+    def path(self):
+        return f"files/{self.index}.mp3"
+
 
 class Project(CommonModel):
-    index = models.PositiveIntegerField(verbose_name="순서", unique=True)
+    index = models.PositiveIntegerField(unique=True, verbose_name="순서")
     title = models.CharField(max_length=80, verbose_name="프로젝트명")
 
     class Meta:
         verbose_name = "프로젝트"
         verbose_name_plural = verbose_name
+        ordering = ["index"]
 
     def __str__(self):
         return self.title

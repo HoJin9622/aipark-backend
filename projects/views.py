@@ -30,11 +30,10 @@ class Projects(APIView):
         audio = Audio.objects.create(
             index=audio_index,
             text=text,
-            path="files/test1.mp3",
             project=project,
         )
         tts = gTTS(" ".join(audio.processed_text))
-        tts.save("files/test1.mp3")
+        tts.save(f"files/{audio_index}.mp3")
         return Response({"ok": True})
 
 
@@ -77,6 +76,21 @@ class ProjectAudio(APIView):
         paginator = Paginator(audios, self.PAGE_SIZE, orphans=2)
         serializer = AudioSerializer(paginator.get_page(page), many=True)
         return Response(serializer.data)
+
+    def post(self, request, pk):
+        """
+        텍스트 생성
+        POST api/v1/projects/{id}/audios/
+        """
+
+        project = self.get_object(pk)
+        serializer = AudioSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+        audio = serializer.save(project=project)
+        tts = gTTS(" ".join(audio.processed_text))
+        tts.save(f"files/{audio.index}.mp3")
+        return Response({"ok": True})
 
 
 class AudioDetail(APIView):

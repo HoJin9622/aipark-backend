@@ -10,6 +10,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 class AudioSerializer(serializers.ModelSerializer):
     processed_text = serializers.ListField(read_only=True)
+    path = serializers.CharField(read_only=True)
 
     class Meta:
         model = Audio
